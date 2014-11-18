@@ -19,7 +19,7 @@ Here's a more extensive example of the ServerMagic config:
 	"global": {
 		"arguments": "nogui"
 	}
-	"servers": [
+	"servers" [
 		{
 			"name": "HelloWorld",
 			"minecraft": "1.7.2",
