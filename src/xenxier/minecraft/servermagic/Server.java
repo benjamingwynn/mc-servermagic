@@ -3,17 +3,14 @@ package xenxier.minecraft.servermagic;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 
 import com.google.common.collect.Lists;
@@ -87,24 +84,25 @@ public class Server implements Runnable {
 		JSONObject propjson = (JSONObject) server_json.get("properties");
 		
 		if (propjson == null || propjson.isEmpty()) {
+			Logger.log("We don't have any overrides for this server in our JSON file, but that's okay.", this.server_name);
 			return;
 		}
 		
-		File propfile = new File(this.server_dir + File.separator + "server.properties");
+		File f = new File(this.server_dir + File.separator + "server.properties");
 		
-		if (!propfile.exists()) {
+		if (!f.exists()) {
 			
 			/*
 			 * server.properties doesn't exist.
 			 * 
 			 * To fix this without dumping all of our overrides into the server.properties file
-			 * or manually inserting default values into the file and overriding them we are
+			 * or manually inserting default values into the file and overriding them, we are
 			 * going go create an instance of the server and wait until it creates the file, once
 			 * it does we're just going to ask it to stop.
 			 * 
 			 */
 			
-			Logger.log("Creating server to generate properties.");
+			Logger.log("Creating server to generate properties...", this.server_name);
 			
 			// Create the server:
 			ProcessBuilder procbuild = new ProcessBuilder(this.server_args);
@@ -112,51 +110,29 @@ public class Server implements Runnable {
 			Process proc = procbuild.start();
 			
 			// Wait until server has created server.properties (check every half second)
-			while(!propfile.exists()){Thread.sleep(500);}
+			while(!f.exists()){Thread.sleep(500);}
 			
 			// Kill the server and log that we got the properties file
 			proc.destroy();
-			Logger.log("Server stopped. Properties were created.");
+			Logger.log("Server stopped. server.properties was created.", this.server_name);
 		}
 		
-
-		List<String> propfilelines = FileUtils.readLines(propfile, Charset.defaultCharset());
+		MinecraftServerProperties propmc = new MinecraftServerProperties(f);
 		
-		for (int i = 0; i < propfilelines.size(); i++) {
-			// check if this property is overridden in the JSON file
-			if (propjson.get(propfilelines.get(i).split("=")[0]) != null) {
-				replaceLine(propfile, propfilelines.get(i), propfilelines.get(i).split("=")[0] + "=" + propjson.get(propfilelines.get(i).split("=")[0]));
+		// Loop through all properties in server.properties
+		for (int i = 0; i < propmc.lines.size(); i++) {
+			// If the property found exists in the JSON file:
+			if (propjson.get(propmc.getPropOf(i)) != null) {
+				propmc.modifyProp(propmc.getPropOf(i), propjson.get(propmc.getPropOf(i)).toString());
 			}
 		}
-	}
-	
-	private static void replaceLine(File input_file, String line_to_remove, String replacement_line) throws IOException {
-		System.out.println("REPLACING " + line_to_remove + " WITH " + replacement_line);
-		
-		File temp_file = new File(input_file.getAbsolutePath().toString() + ".tmp");
-		BufferedReader reader = new BufferedReader(new FileReader(input_file));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(temp_file));
-		String line;
-		
-		while((line = reader.readLine()) != null) {
-		    if (line.trim().equals(line_to_remove)) {
-		    	writer.write(replacement_line + System.getProperty("line.separator"));
-		    } else {
-		    	writer.write(line + System.getProperty("line.separator"));
-		    }
-		}
-		
-		writer.close(); 
-		reader.close(); 
-		input_file.delete();
-		temp_file.renameTo(input_file);
 	}
 	
 	private void flagEulaTrue() throws IOException {
 		/* 
 		 * Automatically flag eula=true inside eula.txt.
 		 * 
-		 * > By running this function you are agreeing to Mojang's EULA.
+		 * > By executing this method you are agreeing to Mojang's EULA.
 		 * > https://account.mojang.com/documents/minecraft_eula
 		 */
 
@@ -178,6 +154,8 @@ public class Server implements Runnable {
 			this.server_log = this.server_proc.getInputStream();
 			this.server_writer = new BufferedWriter(new OutputStreamWriter(server_in));
 			this.server_reader = new BufferedReader(new InputStreamReader(server_log));
+			
+			passCommand("say ServerMagic started the server"); // Java requires us to pass a command so we can use passCommand later.
 
 			String line = null;
 			StringBuilder out = new StringBuilder();
@@ -185,9 +163,8 @@ public class Server implements Runnable {
 			while ((line = this.server_reader.readLine()) != null) {
 			   out.append(line);
 			   out.append(System.getProperty("line.separator"));
-			   Logger.serverLog(this.server_name, line.toString());
+			   Logger.log(this.server_name, line.toString());
 			}
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
