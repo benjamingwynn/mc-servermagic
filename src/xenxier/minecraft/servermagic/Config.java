@@ -19,20 +19,23 @@ public final class Config {
 	public static void createJSONObjects() throws IOException {
 		File json_file = new File(Reference.home_folder + File.separator + "config.json");
 		
-		if (!json_file.exists()) {			
+		if (!json_file.exists()) {
+			json_file.getParentFile().mkdirs();
+			json_file.createNewFile();
+			
 			JSONObject head = new JSONObject();
 			JSONObject global = new JSONObject();
 			JSONArray servers = new JSONArray();
 			JSONObject server = new JSONObject();
 
-			server.put("minecraft", "1.8");
 			server.put("name", "ExampleServerEntry");
+			server.put("minecraft", "1.8");
 			servers.add(server);
 			
 			global.put("arguments", "");
 
-			head.put("servers", servers);
 			head.put("global", global);
+			head.put("servers", servers);
 			
 			FileWriter writer = new FileWriter(json_file);
 			head.writeJSONString(writer);

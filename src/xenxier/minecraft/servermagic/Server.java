@@ -6,7 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -19,13 +22,16 @@ public class Server implements Runnable {
 	public final String server_name;
 	public final int server_id;
 	public final Minecraft minecraft;
-	public final List<String> launch_arguments;
+	public final List<String> server_args;
 	public final File server_dir;
 	public final JSONObject server_json;
 	
-	public volatile String server_out;
+	private volatile InputStream server_log;
+	private volatile OutputStream server_in;
+	private volatile BufferedWriter server_writer;
+	private volatile BufferedReader server_reader;
 
-	private ProcessBuilder server_proc_build;
+	private ProcessBuilder server_builder;
 	private Process server_proc;
 	
 	public Server(int id) {
@@ -50,7 +56,7 @@ public class Server implements Runnable {
 		}
 		
 		// Build the launch commands:
-		launch_arguments = Lists.newArrayList(
+		server_args = Lists.newArrayList(
 			Reference.java,
 			"-jar",
 			minecraft.getJarLocation().toString()
@@ -58,15 +64,15 @@ public class Server implements Runnable {
 		
 		// Add from config:
 		if (!(Config.global.get("arguments") == null)) {
-			launch_arguments.add(Config.global.get("arguments").toString());
+			server_args.add(Config.global.get("arguments").toString());
 		}
 		
 		if (!(server_json.get("arguments") == null)) {
-			launch_arguments.add(server_json.get("arguments").toString());
+			server_args.add(server_json.get("arguments").toString());
 		}
 		
 		// Test:
-		Logger.log("Set up server with the arguments: '" + launch_arguments + "'");
+		Logger.log("Set up server with the arguments: '" + server_args + "'");
 		
 		try {
 			overrideServerProperties();
@@ -101,7 +107,7 @@ public class Server implements Runnable {
 			Logger.log("Creating server to generate properties.");
 			
 			// Create the server:
-			ProcessBuilder procbuild = new ProcessBuilder(this.launch_arguments);
+			ProcessBuilder procbuild = new ProcessBuilder(this.server_args);
 			procbuild.directory(this.server_dir);
 			Process proc = procbuild.start();
 			
@@ -162,25 +168,35 @@ public class Server implements Runnable {
 	@Override
 	public synchronized void run() {
 		Logger.log("Starting " + this.server_name);
-		this.server_proc_build = new ProcessBuilder(this.launch_arguments);
-		this.server_proc_build.directory(this.server_dir);
+		this.server_builder = new ProcessBuilder(this.server_args);
+		this.server_builder.directory(this.server_dir);
+		this.server_builder.redirectErrorStream(true);
 		
 		try {
-			this.server_proc = this.server_proc_build.start();
+			this.server_proc = this.server_builder.start();
+			this.server_in = this.server_proc.getOutputStream();
+			this.server_log = this.server_proc.getInputStream();
+			this.server_writer = new BufferedWriter(new OutputStreamWriter(server_in));
+			this.server_reader = new BufferedReader(new InputStreamReader(server_log));
+
+			String line = null;
+			StringBuilder out = new StringBuilder();
+			
+			while ((line = this.server_reader.readLine()) != null) {
+			   out.append(line);
+			   out.append(System.getProperty("line.separator"));
+			   Logger.serverLog(this.server_name, line.toString());
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(this.server_proc.getInputStream()));
-		StringBuilder builder = new StringBuilder();
-		String line = null;
+	}
+	
+	public void passCommand(String command) {
 		try {
-			while ((line = reader.readLine()) != null) {
-			   builder.append(line);
-			   builder.append(System.getProperty("line.separator"));
-			   Logger.serverLog(this.server_name, line.toString());
-			   this.server_out = this.server_out + line.toString();
-			}
+			this.server_writer.write(command + "\n");
+			this.server_writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

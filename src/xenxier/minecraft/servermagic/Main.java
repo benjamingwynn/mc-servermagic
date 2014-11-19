@@ -7,7 +7,10 @@ public final class Main {
 		try {
 			Config.createJSONObjects();
 			Activity.startAllServers();
+			Console.console();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
