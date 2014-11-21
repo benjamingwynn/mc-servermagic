@@ -67,10 +67,10 @@ Events are called under the 'events' object under a server, and are simply serve
 
 The following events are currently supported:
 
-* *login* - called when a player logs in.
-* *login* - called when a player logs out.
+* `login` - called when a player logs in.
+* `logout` - called when a player logs out.
 
-Multiple server commands can be executed, and are separated with the `;` character. Any events 
+Multiple server commands can be executed, and are separated with the `;` character. When the `@$` characters are used consecutively, events that specify a player (such as someone logging out) will replace `@$`. For example, `say Hello @$` will be replaced with `say Hello Notch` if someone named Notch were to log on.
 
 ```JSON
 {
