@@ -9,9 +9,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
+
+import xenxier.minecraft.servermagic.event.Event;
+import xenxier.minecraft.servermagic.event.LoginEvent;
+import xenxier.minecraft.servermagic.event.LogoutEvent;
 
 import com.google.common.collect.Lists;
 
@@ -23,10 +28,12 @@ public class Server implements Runnable {
 	public final File server_dir;
 	public final JSONObject server_json;
 	
-	private volatile InputStream server_log;
+	public volatile InputStream server_log;
 	private volatile OutputStream server_in;
 	private volatile BufferedWriter server_writer;
 	private volatile BufferedReader server_reader;
+	
+	private final ArrayList<Event> server_events;
 
 	private ProcessBuilder server_builder;
 	private Process server_proc;
@@ -38,6 +45,11 @@ public class Server implements Runnable {
 		this.server_name = server_json.get("name").toString();
 		this.minecraft = new Minecraft(server_json.get("minecraft").toString());
 		this.server_dir = new File(Reference.home_folder + File.separator + "servers" + File.separator + server_name);
+		
+		// Register server events:
+		this.server_events = new ArrayList<Event>();
+		this.server_events.add(new LoginEvent(this));
+		this.server_events.add(new LogoutEvent(this));
 
 		// Make sure our directory exists:
 		if (!this.server_dir.exists()) {
@@ -156,14 +168,18 @@ public class Server implements Runnable {
 			this.server_reader = new BufferedReader(new InputStreamReader(server_log));
 			
 			passCommand("say ServerMagic started the server"); // Java requires us to pass a command so we can use passCommand later.
-
+	
 			String line = null;
 			StringBuilder out = new StringBuilder();
 			
+			// Will loop while server is running.
 			while ((line = this.server_reader.readLine()) != null) {
-			   out.append(line);
-			   out.append(System.getProperty("line.separator"));
-			   Logger.log(this.server_name, line.toString());
+				out.append(line);
+				out.append(System.getProperty("line.separator"));
+				Logger.log(this.server_name, line.toString());
+				for (int i = 0; i < this.server_events.size(); i++) {
+					this.server_events.get(i).parseLine(line.toString());
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
