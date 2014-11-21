@@ -188,7 +188,7 @@ public class Server implements Runnable {
 	
 	public void passCommand(String command) {
 		try {
-			this.server_writer.write(command + "\n");
+			this.server_writer.write(command.trim() + "\n");
 			this.server_writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
