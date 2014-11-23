@@ -20,8 +20,8 @@ Here's an example of a ServerMagic config:
 {
 	"global": {
 		"arguments": "nogui"
-	}
-	"servers" [
+	},
+	"servers": [
 		{
 			"name": "HelloWorld",
 			"minecraft": "1.7.2",
@@ -66,7 +66,7 @@ Multiple server commands can be executed, and are separated with the `;` charact
 
 ```JSON
 {
-	"servers" [
+	"servers": [
 		{
 			"name": "EventServer",
 			"minecraft": "1.8",
@@ -86,8 +86,8 @@ Here's a more complicated example which spawns a firework where the user logs in
 {
 	"global": {
 		"arguments": "nogui"
-	}
-	"servers" [
+	},
+	"servers": [
 		{
 			"name": "TheLovelyServer",
 			"minecraft": "1.7.2",
@@ -97,7 +97,7 @@ Here's a more complicated example which spawns a firework where the user logs in
 				"level-name": "lovely_world"
 			},
 			"events": {
-				"start": "say Welcome to the lovely server!"
+				"start": "say Welcome to the lovely server!",
 				"login": "tell @$ Welcome!; execute @$ ~ ~ ~ summon FireworksRocketEntity ~ ~ ~ {LifeTime:20,FireworksItem:{id:401,Count:1,tag:{Fireworks:{Explosions:[{Type:1,Flicker:1,Trail:1,Colors:[65535,16777215],FadeColors:[18844]}]}}}}",
 				"logout": "say Goodbye @$!"
 			}
@@ -116,7 +116,7 @@ The `time` object specifies how many minutes will pass before ServerMagic backs 
 
 ```JSON
 {
-	"servers" [
+	"servers": [
 		{
 			"name": "BackupServer",
 			"minecraft": "1.8",
@@ -134,11 +134,12 @@ The `time` object specifies how many minutes will pass before ServerMagic backs 
 
 Using everything documented in this README you can create an extensive and complicated server array in a single document:
 
+```JSON
 {
 	"global": {
 		"arguments": ""
-	}
-	"servers" [
+	},
+	"servers": [
 		{
 			"name": "HelloWorld",
 			"minecraft": "1.8.1-pre4",
@@ -177,6 +178,7 @@ Using everything documented in this README you can create an extensive and compl
 		}
 	]
 }
+```
 
 ### Compiling ServerMagic
 
