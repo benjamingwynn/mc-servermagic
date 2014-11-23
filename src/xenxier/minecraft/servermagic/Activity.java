@@ -7,7 +7,7 @@ public final class Activity {
 	public static final ArrayList<Server> servers = new ArrayList<Server>();
 
 	public static void startAllServers() throws InterruptedException {
-		// start every server in the background:
+		// Start every server:
 		for (int i = 0; i < Config.servers.size(); i++) {
 			servers.add(new Server(i));
 			Thread thread = new Thread(servers.get(i));

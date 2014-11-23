@@ -212,11 +212,14 @@ public class Server implements Runnable {
 			String line = null;
 			StringBuilder out = new StringBuilder();
 			
-			// The following code loops while the server is alive.
+			// The following code loops while the server is alive:
 			while ((line = this.server_reader.readLine()) != null) {
 				out.append(line);
 				out.append(System.getProperty("line.separator"));
-				Logger.log(line.toString(), this);
+				
+				if (Console.selected_server ==  this.server_id) { // only prints for the server that's currently selected
+					Logger.log(line.toString(), this);
+				}
 				
 				// Loop through events:
 				for (int i = 0; i < this.server_events.size(); i++) {
@@ -233,7 +236,7 @@ public class Server implements Runnable {
 			this.server_writer.write(command.trim() + "\n");
 			this.server_writer.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }
