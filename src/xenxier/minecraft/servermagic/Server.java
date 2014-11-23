@@ -99,7 +99,7 @@ public class Server implements Runnable {
 		JSONObject propjson = (JSONObject) server_json.get("properties");
 		
 		if (propjson == null || propjson.isEmpty()) {
-			Logger.log("We don't have any overrides for this server in our JSON file, but that's okay.", this.server_name);
+			Logger.log("We don't have any overrides for this server in our JSON file, but that's okay.", this);
 			return;
 		}
 		
@@ -117,7 +117,7 @@ public class Server implements Runnable {
 			 * 
 			 */
 			
-			Logger.log("Creating server to generate properties...", this.server_name);
+			Logger.log("Creating server to generate properties...", this);
 			
 			// Create the server:
 			ProcessBuilder procbuild = new ProcessBuilder(this.server_args);
@@ -129,7 +129,7 @@ public class Server implements Runnable {
 			
 			// Kill the server and log that we got the properties file
 			proc.destroy();
-			Logger.log("Server stopped. server.properties was created.", this.server_name);
+			Logger.log("Server stopped. server.properties was created.", this);
 		}
 		
 		MinecraftServerProperties propmc = new MinecraftServerProperties(f);
@@ -216,7 +216,7 @@ public class Server implements Runnable {
 			while ((line = this.server_reader.readLine()) != null) {
 				out.append(line);
 				out.append(System.getProperty("line.separator"));
-				Logger.log(this.server_name, line.toString());
+				Logger.log(line.toString(), this);
 				
 				// Loop through events:
 				for (int i = 0; i < this.server_events.size(); i++) {

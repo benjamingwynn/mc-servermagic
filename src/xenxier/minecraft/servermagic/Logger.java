@@ -5,7 +5,7 @@ public final class Logger {
 		System.out.println("[ServerMagic ("+ Reference.version + ")] " + object);
 	}
 	
-	public static void log(String serverid, String string) {
-		System.out.println("[ServerMagic ("+ Reference.version + "):" + serverid + "] " + string);
+	public static void log(String string, Server server) {
+		System.out.println("[ServerMagic ("+ Reference.version + "):" + server.server_name + "] " + string);
 	}
 }
