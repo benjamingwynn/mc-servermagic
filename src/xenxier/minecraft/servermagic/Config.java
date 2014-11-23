@@ -28,11 +28,11 @@ public final class Config {
 			JSONArray servers = new JSONArray();
 			JSONObject server = new JSONObject();
 
-			server.put("name", "ExampleServerEntry");
+			server.put("name", "MyServer");
 			server.put("minecraft", "1.8");
 			servers.add(server);
 			
-			global.put("arguments", "");
+			global.put("arguments", "nogui");
 
 			head.put("global", global);
 			head.put("servers", servers);

@@ -11,6 +11,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 
@@ -72,7 +75,7 @@ public class Server implements Runnable {
 		);
 		
 		// Add from config:
-		if (!(Config.global.get("arguments") == null)) {
+		if (Config.global != null && Config.global.get("arguments") != null) {
 			server_args.add(Config.global.get("arguments").toString());
 		}
 		
@@ -167,16 +170,55 @@ public class Server implements Runnable {
 			this.server_writer = new BufferedWriter(new OutputStreamWriter(server_in));
 			this.server_reader = new BufferedReader(new InputStreamReader(server_log));
 			
-			passCommand("say ServerMagic started the server"); // Java requires us to pass a command so we can use passCommand later.
-	
+			/*
+			 *  We have to do something with passCommand or Java will refuse to accept it as part
+			 *  of our server process.
+			 *  
+			 *  A solution to this problem is to have an event on the server start, however having
+			 *  an actual event class for something that can only happen once, and that doesn't have
+			 *  a traditional trigger is difficult and would require a lot of changes and hacks in the
+			 *  main event class. 
+			 *  
+			 *  What we do below is parse what's under servers/<server>/events/start like an event, and
+			 *  keep it in the events object, but we don't actually have an event class for it.
+			 *  
+			 */
+			
+			if (this.server_json.get("events") != null && ((JSONObject) this.server_json.get("events")).get("start") != null) {
+				Event.parse(this,((JSONObject) this.server_json.get("events")).get("start").toString());
+			} else {
+				passCommand("say ServerMagic started " + this.server_name);
+			}
+			
+			// Backup objects:
+			JSONObject backup_json = (JSONObject) this.server_json.get("backup");
+			Backup backup = new Backup(this);
+			
+			// Backup runnable:
+			if (this.server_json.get("backup") != null) {
+				ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+				executor.scheduleAtFixedRate(new Runnable() {
+				    public void run() {
+				    	try {
+							backup.backupServer();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+				    }
+				}, 0, (long) backup_json.get("time"), TimeUnit.MINUTES);
+			}
+			
+			// Server out:
 			String line = null;
 			StringBuilder out = new StringBuilder();
 			
-			// Will loop while server is running.
+			// The following code loops while the server is alive.
 			while ((line = this.server_reader.readLine()) != null) {
 				out.append(line);
 				out.append(System.getProperty("line.separator"));
 				Logger.log(this.server_name, line.toString());
+				
+				// Loop through events:
 				for (int i = 0; i < this.server_events.size(); i++) {
 					this.server_events.get(i).parseLine(line.toString());
 				}
