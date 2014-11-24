@@ -16,15 +16,13 @@ public class ListCommand extends Command {
 		final Object[][] table = new String[Activity.servers.size()][];
 		
 		for (int i = 0; i < Activity.servers.size(); i++) {
-			if (Activity.threads.size() <= i) {
-				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Stopped", "(Thread Remains)"};
-			} else if (Activity.threads.get(i).isAlive() && Activity.servers.get(i).server_id == Console.current_server.server_id) {
+			if (Activity.servers.get(i).server_thread.isAlive() && Activity.servers.get(i) == Console.current_server) {
 				running++;
 				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Running", "Selected"};
-			} else if (Activity.threads.get(i).isAlive()) {
+			} else if (Activity.servers.get(i).server_thread.isAlive()) {
 				running++;
 				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Running"};
-			} else if (!Activity.threads.get(i).isAlive()) {
+			} else if (!Activity.servers.get(i).server_thread.isAlive()) {
 				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Stopped"};
 			}
 		}

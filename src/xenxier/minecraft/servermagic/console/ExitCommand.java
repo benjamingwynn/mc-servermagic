@@ -18,7 +18,7 @@ public class ExitCommand extends Command {
 			Activity.servers.get(i).passCommand("stop");
 			
 			// Wait here until the server stopped:
-			while (Activity.threads.get(i).isAlive()){
+			while (Activity.servers.get(i).server_thread.isAlive()){
 				try { Thread.sleep(500); } catch (InterruptedException e) { }
 			};
 		}

@@ -42,6 +42,7 @@ public class Server implements Runnable {
 
 	private ProcessBuilder server_builder;
 	private Process server_proc;
+	public volatile Thread server_thread = new Thread(this);
 	
 	public Server(int id) {
 		this.server_id = id;
@@ -194,7 +195,7 @@ public class Server implements Runnable {
 			
 			// Backup objects:
 			JSONObject backup_json = (JSONObject) this.server_json.get("backup");
-			Backup backup = new Backup(this);
+			final Backup backup = new Backup(this);
 			
 			// Backup runnable:
 			if (this.server_json.get("backup") != null) {

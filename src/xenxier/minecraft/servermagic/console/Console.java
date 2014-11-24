@@ -87,19 +87,20 @@ public final class Console {
 	public static void selectServer(int server_number) {
 		try {
 			current_server = Activity.servers.get(server_number);
-			try {
-				if (!Activity.threads.get(server_number).isAlive()) {
-					System.out.println("The server was stopped, restarting...");
-					// Start the already existing thread:
-					Activity.threads.get(server_number).start();
+			
+			if (!current_server.server_thread.isAlive()) {
+				System.out.println("The server was stopped, restarting...");
+				
+				if (current_server.server_thread.getState().toString().toLowerCase().equals("new")) {
+					// If this is a new thread, start it:
+					current_server.server_thread.start();
+				} else {
+					// If this is an old thread, recreate and restart it:
+					current_server.server_thread = new Thread(current_server);
+					current_server.server_thread.start();
 				}
-			} catch (IndexOutOfBoundsException x) {
-				System.out.println("The servers thread didn't exist, starting...");
-				// Make a new thread and start the server:
-				Thread thread = new Thread(Activity.servers.get(server_number));
-				thread.start();
-				Activity.threads.add(thread);
 			}
+			
 		} catch (IndexOutOfBoundsException e) {
 			// If server not found:
 			System.out.println("Tried to select a server that doesn't exist.");
