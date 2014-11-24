@@ -2,9 +2,10 @@ package xenxier.minecraft.servermagic;
 
 import java.io.IOException;
 
+import xenxier.minecraft.servermagic.console.Console;
+
 public final class Main {
 	public static void main(String args[]) {
-		Logger.log("Welcome to ServerMagic " + Reference.version);
 		try {
 			Config.createJSONObjects();
 			Activity.startAllServers();

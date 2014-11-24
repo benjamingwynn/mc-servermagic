@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 
+import xenxier.minecraft.servermagic.console.Console;
+import xenxier.minecraft.servermagic.console.LogCommand;
 import xenxier.minecraft.servermagic.event.Event;
 import xenxier.minecraft.servermagic.event.LoginEvent;
 import xenxier.minecraft.servermagic.event.LogoutEvent;
@@ -217,7 +219,8 @@ public class Server implements Runnable {
 				out.append(line);
 				out.append(System.getProperty("line.separator"));
 				
-				if (Console.selected_server ==  this.server_id) { // only prints for the server that's currently selected
+				// Logging logic:
+				if ((LogCommand.log.equals("current") && Console.current_server ==  this) || LogCommand.log.equals("all")) {
 					Logger.log(line.toString(), this);
 				}
 				
