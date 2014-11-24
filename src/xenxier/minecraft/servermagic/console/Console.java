@@ -17,13 +17,16 @@ public final class Console {
 	
 	public static void console() {
 		// Welcome!
-		System.out.println("-----------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
 		System.out.println("");
 		System.out.println("Welcome to ServerMagic " + Reference.version + "!");
 		System.out.println("");
 		System.out.println("ServerMagic now has support for different levels of logging, use");
 		System.out.println("'log <current/all/none>' to show logs from the current server, all");
 		System.out.println("servers or none of the servers.");
+		System.out.println("");
+		System.out.println("Note: As of ServerMagic 0.2, 'list' is now referenced to as 'listservers'");
+		System.out.println("players.");
 		System.out.println("");
 		
 		// Start at server 0 with logging off - TODO: JSON options for these defaults.

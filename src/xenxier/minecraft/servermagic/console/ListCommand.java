@@ -5,25 +5,22 @@ import xenxier.minecraft.servermagic.Activity;
 public class ListCommand extends Command {
 
 	public ListCommand() {
-		super("list");
+		super("listservers");
 	}
 
 	@Override
 	public void execute() {
-		System.out.println("\nAll Configured Servers:");
+		System.out.println("\n" + "All Configured Servers:");
 		
 		int running = 0;
 		final Object[][] table = new String[Activity.servers.size()][];
 		
 		for (int i = 0; i < Activity.servers.size(); i++) {
-			if (Activity.servers.get(i).server_thread.isAlive() && Activity.servers.get(i) == Console.current_server) {
+			String state = Activity.servers.get(i).server_thread.getState().toString().toLowerCase();
+			table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, state.substring(0, 1).toUpperCase() + state.substring(1)};
+			
+			if (Activity.servers.get(i).server_thread.isAlive()) {
 				running++;
-				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Running", "Selected"};
-			} else if (Activity.servers.get(i).server_thread.isAlive()) {
-				running++;
-				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Running"};
-			} else if (!Activity.servers.get(i).server_thread.isAlive()) {
-				table[i] = new String[] { String.valueOf(Activity.servers.get(i).server_id), Activity.servers.get(i).server_name, "Stopped"};
 			}
 		}
 		
@@ -31,7 +28,8 @@ public class ListCommand extends Command {
 		    System.out.format("%15s%15s%15s\n", row);
 		}
 		
-		System.out.println("\nThere are " + Activity.servers.size() + " servers loaded. " + running + " of which are currently running.\n");
+		System.out.println("\n" + "Server #" + Console.current_server.server_id + " is curerntly selected.");
+		System.out.println("There are " + Activity.servers.size() + " servers loaded. " + running + " of which are currently running." + "\n");
 	}
 
 }

@@ -6,7 +6,7 @@ A Java application to download, start, stop, maintain, backup and configure any 
 
 To use ServerMagic just start up the complied JAR file in a terminal with something like `java -jar servermagic.jar`
 
-The current interface is simple, just type `list` to list the servers, `select <server number>` to select a server and `exit` to shut down all of the servers and exit the program.
+The current interface is simple, just type `listservers` to list the servers, `select <server number>` to select a server and `exit` to shut down all of the servers and exit the program.
 
 When you start ServerMagic for the first time you will automatically have a server called `MyServer`. If you wish to configure ServerMagic and add your own servers then open `/.servermagic/config.json`, relative to where you opened the ServerMagic JAR. The file should be pretty self explanatory for those familiar with both Minecraft servers and JSON, and ServerMagic will even grab the Minecraft JAR file for you, but there are a few rules:
 
