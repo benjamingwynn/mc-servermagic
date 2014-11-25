@@ -221,8 +221,10 @@ public class Server implements Runnable {
 				out.append(System.getProperty("line.separator"));
 				
 				// Logging logic:
-				if ((LogCommand.log.equals("current") && Console.current_server ==  this) || LogCommand.log.equals("all")) {
-					Logger.log(line.toString(), this);
+				if (LogCommand.log != null && Console.current_server != null) {
+					if ((LogCommand.log.equals("current") && Console.current_server ==  this) || LogCommand.log.equals("all")) {
+						Logger.log(line.toString(), this);
+					}
 				}
 				
 				// Loop through events:
