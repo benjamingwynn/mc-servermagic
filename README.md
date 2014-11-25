@@ -188,4 +188,4 @@ To compile ServerMagic please use the standard Java compiler with the following 
 * json-simple-1.1.1
 * guava-18.0
 
-ServerMagic is built with Java 8, although should work on Java 6 and above.
+ServerMagic is built with Java 8, although it'll work on any system with Java 7 or above.
