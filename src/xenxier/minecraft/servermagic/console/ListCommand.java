@@ -10,6 +10,10 @@ public class ListCommand extends Command {
 
 	@Override
 	public void execute() {
+		printList();
+	}
+	
+	public static void printList() {
 		System.out.println("\n" + "All Configured Servers:");
 		
 		int running = 0;

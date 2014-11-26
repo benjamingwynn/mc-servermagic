@@ -1,5 +1,7 @@
 package xenxier.minecraft.servermagic.console;
 
+import xenxier.minecraft.servermagic.Activity;
+
 public class StopCommand extends Command {
 
 	public StopCommand() {
@@ -19,6 +21,6 @@ public class StopCommand extends Command {
 		};
 		
 		// No server should be selected:
-		Console.unselectServer();
+		Activity.unselectServer();
 	}
 }

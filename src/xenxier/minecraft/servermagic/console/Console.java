@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import xenxier.minecraft.servermagic.Activity;
 import xenxier.minecraft.servermagic.Reference;
@@ -30,7 +31,7 @@ public final class Console {
 		System.out.println("");
 		
 		// Start at server 0 with logging off - TODO: JSON options for these defaults.
-		selectServer(0);
+		Activity.selectServer(0);
 		LogCommand.log = "none";
 		
 		// Register Passives:
@@ -41,6 +42,8 @@ public final class Console {
 		registerOverride(new xenxier.minecraft.servermagic.console.ListCommand());
 		registerOverride(new xenxier.minecraft.servermagic.console.LogCommand());
 		registerOverride(new xenxier.minecraft.servermagic.console.SelectCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.BackupCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.RestoreWorldCommand());
 		
 		// Input loop (I'm still not a fan of while true, but it seems to work well.)
 		while (true) {
@@ -49,7 +52,7 @@ public final class Console {
 		}
 	}
 	
-	public static void parseCommand(String command) {
+	private static void parseCommand(String command) {
 		// Test command for overrides:
 		for (int i = 0; i < overrides.size(); i++) {
 			if (command.contains(overrides.get(i).name)) {
@@ -59,7 +62,8 @@ public final class Console {
 					return; // return to not pass command
 				// If the user typed the command with stuff behind it:
 				} else if (command.split(" ").length > 1 && command.split(" ")[0].equals(overrides.get(i).name)) {
-					overrides.get(i).execute(command.split(" ")[1]); // Get the argument and pass it
+					// Get the arguments:
+					overrides.get(i).execute(Arrays.copyOfRange(command.split(" "), 1, command.split(" ").length));
 					return; // return to not pass command
 				}
 			}
@@ -76,55 +80,13 @@ public final class Console {
 		}
 	}
 	
-	public static boolean selectServer(String server_number) {
-		try {
-			selectServer(Integer.parseInt(server_number));
-			return true;
-		} catch (NumberFormatException e) {
-			// If the user can't type a number when asked to type a number:
-			System.out.println("Please use a server number ranging from 0 to " + (Activity.servers.size() - 1) + ".");
-			return false;
-		}
-	}
-	
-	public static void selectServer(int server_number) {
-		try {
-			current_server = Activity.servers.get(server_number);
-			
-			if (!current_server.server_thread.isAlive()) {
-				System.out.println("The server was stopped, restarting...");
-				
-				if (current_server.server_thread.getState().toString().toLowerCase().equals("new")) {
-					// If this is a new thread, start it:
-					current_server.server_thread.start();
-				} else {
-					// If this is an old thread, recreate and restart it:
-					current_server.server_thread = new Thread(current_server);
-					current_server.server_thread.start();
-				}
-			}
-			
-		} catch (IndexOutOfBoundsException e) {
-			// If server not found:
-			System.out.println("Tried to select a server that doesn't exist.");
-		}
-	}
-	
-	public static void unselectServer() {
-		boolean ok = false;
-		while (!ok) {
-			System.out.print("Please select a new server number > ");
-			ok = selectServer(getInput());
-		}
-	}
-	
 	/* registerOverride
 	 * 
 	 * Stops command from being passed to selected server and instead
 	 * does the command.
 	 */
 	
-	private static String getInput() {
+	public static String getInput() {
 		try {
 			return br.readLine().trim();
 		} catch (IOException e) {

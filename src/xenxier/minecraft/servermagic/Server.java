@@ -54,7 +54,6 @@ public class Server implements Runnable {
 		this.server_events = new ArrayList<Event>();
 		this.server_events.add(new xenxier.minecraft.servermagic.event.LoginEvent(this));
 		this.server_events.add(new xenxier.minecraft.servermagic.event.LogoutEvent(this));
-		this.server_events.add(new xenxier.minecraft.servermagic.event.OpEvent(this));
 
 		// Make sure our directory exists:
 		if (!this.server_dir.exists()) {
@@ -192,22 +191,38 @@ public class Server implements Runnable {
 				passCommand("say ServerMagic started " + this.server_name);
 			}
 			
-			// Backup objects:
-			JSONObject backup_json = (JSONObject) this.server_json.get("backup");
-			final Backup backup = new Backup(this);
+			if ((JSONObject) this.server_json.get("backup") != null) {
+				// Backup objects:
+				final Backup backup = new Backup(this);
+				
+				// Server Backup runnable:
+				if (((JSONObject) this.server_json.get("backup")).get("server") != null) {
+					ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+					executor.scheduleAtFixedRate(new Runnable() {
+					    public void run() {
+					    	try {
+								backup.backupServer();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+					    }
+					}, 0, (long) ((JSONObject) ((JSONObject) this.server_json.get("backup")).get("server")).get("time"), TimeUnit.MINUTES);
+				}
+				
+				// World Backup runnable:
+				if (((JSONObject) this.server_json.get("backup")).get("world") != null) {
+					ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+					executor.scheduleAtFixedRate(new Runnable() {
+					    public void run() {
+					    	try {
+								backup.backupWorld();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+					    }
+					}, 0, (long) ((JSONObject) ((JSONObject) this.server_json.get("backup")).get("world")).get("time"), TimeUnit.MINUTES);
+				}
 			
-			// Backup runnable:
-			if (this.server_json.get("backup") != null) {
-				ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
-				executor.scheduleAtFixedRate(new Runnable() {
-				    public void run() {
-				    	try {
-							backup.backupServer();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-				    }
-				}, 0, (long) backup_json.get("time"), TimeUnit.MINUTES);
 			}
 			
 			// Server out:

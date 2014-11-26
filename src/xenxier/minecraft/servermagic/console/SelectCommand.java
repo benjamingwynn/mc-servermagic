@@ -1,5 +1,7 @@
 package xenxier.minecraft.servermagic.console;
 
+import xenxier.minecraft.servermagic.Activity;
+
 
 public class SelectCommand extends Command {
 
@@ -14,7 +16,7 @@ public class SelectCommand extends Command {
 	
 	@Override
 	public void execute(String argument) {
-		Console.selectServer(argument);
+		Activity.selectServer(argument);
 	}
 
 }

@@ -11,8 +11,13 @@ public abstract class Command implements CommandInterface {
 		this.name = name;
 	}
 
+	// By default, convert a string of arguments into a single argument. Override in sub-class with @Override
+	public void execute(String[] arguments) {
+		execute(arguments[0]);
+	}
+
+	// By default, ignore an argument, this can be overridden using the @Override annotation.
 	public void execute(String argument) {
-		// By default, ignore arguments, this can be overridden using the @override annotation.
 		execute();
 	}
 }
