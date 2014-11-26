@@ -61,6 +61,7 @@ The following events are currently supported:
 * `start` - called when the server is started.
 * `login` - called when a player logs in.
 * `logout` - called when a player logs out.
+* `op` - called when a player is given operator privileges.
 
 Multiple server commands can be executed, and are separated with the `;` character. When the `@$` characters are used consecutively, events that specify a player (such as someone logging out) will replace `@$`. For example, `say Hello @$` will be replaced with `say Hello Notch` if someone named Notch were to log on.
 

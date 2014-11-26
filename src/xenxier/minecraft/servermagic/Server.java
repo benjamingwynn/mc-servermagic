@@ -20,8 +20,6 @@ import org.json.simple.JSONObject;
 import xenxier.minecraft.servermagic.console.Console;
 import xenxier.minecraft.servermagic.console.LogCommand;
 import xenxier.minecraft.servermagic.event.Event;
-import xenxier.minecraft.servermagic.event.LoginEvent;
-import xenxier.minecraft.servermagic.event.LogoutEvent;
 
 import com.google.common.collect.Lists;
 
@@ -54,8 +52,9 @@ public class Server implements Runnable {
 		
 		// Register server events:
 		this.server_events = new ArrayList<Event>();
-		this.server_events.add(new LoginEvent(this));
-		this.server_events.add(new LogoutEvent(this));
+		this.server_events.add(new xenxier.minecraft.servermagic.event.LoginEvent(this));
+		this.server_events.add(new xenxier.minecraft.servermagic.event.LogoutEvent(this));
+		this.server_events.add(new xenxier.minecraft.servermagic.event.OpEvent(this));
 
 		// Make sure our directory exists:
 		if (!this.server_dir.exists()) {
