@@ -35,7 +35,7 @@ public abstract class Event implements EventInterface {
 	private void doJSONEvents(String arg) {
 		parse(this.server, this.eventjson.get(eventname).toString(), arg);
 	}
-	
+
 	public static void parse(Server server, String event, String arg) {
 		if (!event.isEmpty()) {
 			String[] parsed = (event.replace("@$", arg)).split(";");
@@ -48,9 +48,13 @@ public abstract class Event implements EventInterface {
 	}
 	
 	public static void parse(Server server, String event) {
-		String[] parsed = (event.replace("@$", "")).split(";");
-		for (int i = 0; i < parsed.length; i++) {
-			server.passCommand(parsed[i]);
+		if (!event.isEmpty()) {
+			String[] parsed = (event.replace("@$", "")).split(";");
+			for (int i = 0; i < parsed.length; i++) {
+				if (!parsed[i].isEmpty()) {
+					server.passCommand(parsed[i]);
+				}
+			}
 		}
 	}
 }
