@@ -37,10 +37,13 @@ public abstract class Event implements EventInterface {
 	}
 	
 	public static void parse(Server server, String event, String arg) {
-		String[] parsed = (event.replace("@$", arg)).split(";");
-		for (int i = 0; i < parsed.length; i++) {
-			System.out.println("parsed: '" + parsed[i] + "'");
-			server.passCommand(parsed[i]);
+		if (!event.isEmpty()) {
+			String[] parsed = (event.replace("@$", arg)).split(";");
+			for (int i = 0; i < parsed.length; i++) {
+				if (!parsed[i].isEmpty()) {
+					server.passCommand(parsed[i]);
+				}
+			}
 		}
 	}
 	
