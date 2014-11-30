@@ -1,4 +1,4 @@
-package xenxier.minecraft.servermagic.console;
+package xenxier.minecraft.servermagic.console.command;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 import xenxier.minecraft.servermagic.Activity;
 import xenxier.minecraft.servermagic.MinecraftServerProperties;
 import xenxier.minecraft.servermagic.Reference;
+import xenxier.minecraft.servermagic.console.Console;
 import xenxier.minecraft.servermagic.event.Event;
 
 public class RestoreWorldCommand extends Command {

@@ -1,4 +1,4 @@
-package xenxier.minecraft.servermagic.console;
+package xenxier.minecraft.servermagic.console.command;
 
 public class LogCommand extends Command {
 	

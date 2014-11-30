@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import org.json.simple.JSONObject;
 
 import xenxier.minecraft.servermagic.console.Console;
-import xenxier.minecraft.servermagic.console.LogCommand;
+import xenxier.minecraft.servermagic.console.command.LogCommand;
 import xenxier.minecraft.servermagic.event.Event;
 
 import com.google.common.collect.Lists;

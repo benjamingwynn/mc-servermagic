@@ -9,6 +9,8 @@ import java.util.Arrays;
 import xenxier.minecraft.servermagic.Activity;
 import xenxier.minecraft.servermagic.Reference;
 import xenxier.minecraft.servermagic.Server;
+import xenxier.minecraft.servermagic.console.command.Command;
+import xenxier.minecraft.servermagic.console.command.LogCommand;
 
 public final class Console {
 	public static Server current_server;
@@ -35,15 +37,15 @@ public final class Console {
 		LogCommand.log = "none";
 		
 		// Register Passives:
-		registerPassive(new xenxier.minecraft.servermagic.console.StopCommand());
+		registerPassive(new xenxier.minecraft.servermagic.console.command.StopCommand());
 		
 		// Register Overrides:
-		registerOverride(new xenxier.minecraft.servermagic.console.ExitCommand());
-		registerOverride(new xenxier.minecraft.servermagic.console.ListCommand());
-		registerOverride(new xenxier.minecraft.servermagic.console.LogCommand());
-		registerOverride(new xenxier.minecraft.servermagic.console.SelectCommand());
-		registerOverride(new xenxier.minecraft.servermagic.console.BackupCommand());
-		registerOverride(new xenxier.minecraft.servermagic.console.RestoreWorldCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.command.ExitCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.command.ListCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.command.LogCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.command.SelectCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.command.BackupCommand());
+		registerOverride(new xenxier.minecraft.servermagic.console.command.RestoreWorldCommand());
 		
 		// Input loop (I'm still not a fan of while true, but it seems to work well.)
 		while (true) {

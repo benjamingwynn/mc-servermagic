@@ -1,10 +1,11 @@
-package xenxier.minecraft.servermagic.console;
+package xenxier.minecraft.servermagic.console.command;
 
 import java.io.IOException;
 
 import org.json.simple.JSONObject;
 
 import xenxier.minecraft.servermagic.Backup;
+import xenxier.minecraft.servermagic.console.Console;
 
 public class BackupCommand extends Command {
 

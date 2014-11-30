@@ -1,4 +1,4 @@
-package xenxier.minecraft.servermagic.console;
+package xenxier.minecraft.servermagic.console.command;
 
 interface CommandInterface {
 	void execute();

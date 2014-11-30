@@ -3,7 +3,7 @@ package xenxier.minecraft.servermagic;
 import java.util.ArrayList;
 
 import xenxier.minecraft.servermagic.console.Console;
-import xenxier.minecraft.servermagic.console.ListCommand;
+import xenxier.minecraft.servermagic.console.command.ListCommand;
 
 public final class Activity {
 	public static final ArrayList<Server> servers = new ArrayList<Server>();

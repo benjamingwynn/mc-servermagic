@@ -1,6 +1,7 @@
-package xenxier.minecraft.servermagic.console;
+package xenxier.minecraft.servermagic.console.command;
 
 import xenxier.minecraft.servermagic.Activity;
+import xenxier.minecraft.servermagic.console.Console;
 
 public class StopCommand extends Command {
 
