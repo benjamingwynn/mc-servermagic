@@ -131,54 +131,86 @@ The `time` object specifies how many minutes will pass before ServerMagic backs 
 }
 ```
 
-### Combining backups, events and multiple servers:
+## Advanced
+
+### Listeners (0.2-pre2 and up)
+
+Listeners are objects that listen to the servers chat log, and execute code when the listener is called. There is a hard-coded listener called `AboutListener` to deminstrate the concept. `AboutListener` will listen for `!about` and display version information about ServerMagic when a player says `!about` in chat.
+
+You can add your own listeners for each server in your config.json file using the listeners array:
+
+```JSON
+{
+	"servers": [
+		{
+			"name": "ListerExample",
+			"minecraft": "1.8.1",
+			"listeners": [
+				{
+					"listen": "!spectate",
+					"execute": "say @$ is now spectating; gamemode 3 @$"
+				},
+				{
+					"listen": "!play",
+					"execute": "say @$ is back in survival mode; gamemode 0 @$"
+				}
+			]
+		}
+	]
+}
+```
+
+This adds two listeners, one to listen for `!spectate` and one to listen to `!play` - both of which change the players game mode.
+
+**Listeners are very powerful, but anybody who has access to chat can perform them. Please do not do put something like** `give @$ tnt 64` **in your listener. If you only want an op to be able to do a listener use the execute command, for example** `execute @$ ~ ~ ~ give @$ tnt 64`.
+
+### Combining backups, events, listeners and multiple servers
 
 Using everything documented in this README you can create an extensive and complicated server array in a single document:
 
 ```JSON
-{
-	"global": {
-		"arguments": ""
-	},
-	"servers": [
-		{
-			"name": "HelloWorld",
-			"minecraft": "1.8.1-pre4",
-			"properties": {
-				"server-port": "25565",
-				"motd": "HelloWorld Test Server",
-				"gamemode": "1",
-				"online-mode": "false",
-				"level-name": "Test_World"
-			},
-			"events": {
-				"start": "say Server started!",
-				"login": "tell @$ Welcome!;execute @$ ~ ~ ~ summon FireworksRocketEntity ~ ~ ~ {LifeTime:20,FireworksItem:{id:401,Count:1,tag:{Fireworks:{Explosions:[{Type:1,Flicker:1,Trail:1,Colors:[65535,16777215],FadeColors:[18844]}]}}}}",
-				"logout": "say @$ left!"
-			},
-			"backup": {
-				"start": "say Backing up!",
-				"end": "say Backup Done!",
-				"time": 20
+	{
+		"global": {
+			"arguments": "nogui"
+		},
+		"servers": [
+			{
+				"name": "HelloWorld",
+				"minecraft": "1.8.1-pre4",
+				"properties": {
+					"server-port": "25568",
+					"motd": "HelloWorld Test Server",
+					"gamemode": "1",
+					"online-mode": "false",
+					"level-name": "Test_World"
+				},
+				"events": {
+					"start": "say Server started!",
+					"login": "tell @$ Welcome!;execute @$ ~ ~ ~ summon FireworksRocketEntity ~ ~ ~ {LifeTime:20,FireworksItem:{id:401,Count:1,tag:{Fireworks:{Explosions:[{Type:1,Flicker:1,Trail:1,Colors:[65535,16777215],FadeColors:[18844]}]}}}}",
+					"logout": "say @$ left!",
+					"op": "say @$ was given op!"
+				},
+				"backup": {
+					"world": {
+						"start": "say Backing up world",
+						"end": "say World backup done!",
+						"time": 10
+					},
+					"world-restore": {
+						"start": "say Restoring the world in 30 seconds. You will be logged out when the server restarts.",
+						"end": "say World restored.",
+						"time": 30
+					}
+				},
+				"listeners": [
+					{
+						"listen": "!warpmehome",
+						"execute": "tell @$ Teleporting you somewhere safe now, @$; tp @$ 0 80 0"
+					}
+				]
 			}
-		}
-		{
-			"name": "GoodbyeWorld",
-			"minecraft": "1.7.10",
-			"properties": {
-				"server-port": "25566",
-				"motd": "GoodbyeWorld Test Server"
-			},
-			"events": {
-				"start": "say started up the server",
-				"login": "tp @$ 0 100 0; gamemode $0 3"
-			},
-			"backup": {
-				"time": 60
-			}
-		}
-	]
-}
+		]
+	}
 ```
 
 ### Compiling ServerMagic
