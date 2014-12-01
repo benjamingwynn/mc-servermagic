@@ -38,7 +38,19 @@ public abstract class Event implements EventInterface {
 
 	public static void parse(Server server, String event, String arg) {
 		if (!event.isEmpty()) {
-			String[] parsed = (event.replace("@$", arg)).split(";");
+			// The player string may have colour coding in it, parse this out:
+			// example: '§9Player§r' will be parsed to 'Player'
+			StringBuilder sb = new StringBuilder(arg);
+			
+			if (sb.charAt(0) == '§') { // if first character is this then parse
+				int first = sb.indexOf("§");
+				int last = sb.lastIndexOf("§");
+				sb.delete(last, last + 2);
+				sb.delete(first, first + 2);
+			}
+			
+			String[] parsed = (event.replace("@$", sb.toString())).split(";");
+			
 			for (int i = 0; i < parsed.length; i++) {
 				if (!parsed[i].isEmpty()) {
 					server.passCommand(parsed[i]);

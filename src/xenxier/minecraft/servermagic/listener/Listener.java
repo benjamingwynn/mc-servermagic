@@ -25,16 +25,14 @@ public class Listener {
 			// Remove log stuff:
 			String clear_line = log_line.split("<")[1].trim();
 			
-			// Player is everything before '>'
-			String player = clear_line.split(">")[0];
-			
 			// Listen is everything after '>'
 			String listened = clear_line.split(">")[1].trim();
 			
-			System.out.println(player + ":" + listened); // for testing
-			
 			// Is listened listener?
 			if (listened.equals(this.listener)) {
+				// Player is everything before '>'
+				String player = clear_line.split(">")[0];
+				
 				this.execute(player);
 			}
 		

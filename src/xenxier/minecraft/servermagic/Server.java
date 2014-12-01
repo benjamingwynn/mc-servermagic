@@ -63,9 +63,11 @@ public class Server implements Runnable {
 		// Register custom server listeners:
 		JSONArray listener_json = (JSONArray) this.server_json.get("listeners");
 		
-		for (int i = 0; i < listener_json.size(); i++) {
-			JSONObject current = (JSONObject) listener_json.get(i);
-			this.server_listeners.add(new xenxier.minecraft.servermagic.listener.Listener(this, current.get("listen").toString(), current.get("execute").toString()));
+		if (!(listener_json == null)) {
+			for (int i = 0; i < listener_json.size(); i++) {
+				JSONObject current = (JSONObject) listener_json.get(i);
+				this.server_listeners.add(new xenxier.minecraft.servermagic.listener.Listener(this, current.get("listen").toString(), current.get("execute").toString()));
+			}
 		}
 
 		// Make sure our directory exists:
