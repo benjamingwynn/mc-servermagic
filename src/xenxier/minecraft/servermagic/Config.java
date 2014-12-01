@@ -53,6 +53,7 @@ public final class Config {
 				Logger.log("At least one server must be in your config.json file to continue.");
 				System.exit(1);
 			}
+			
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}

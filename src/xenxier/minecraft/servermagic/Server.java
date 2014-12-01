@@ -15,11 +15,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import xenxier.minecraft.servermagic.console.Console;
 import xenxier.minecraft.servermagic.console.command.LogCommand;
 import xenxier.minecraft.servermagic.event.Event;
+import xenxier.minecraft.servermagic.listener.Listener;
 
 import com.google.common.collect.Lists;
 
@@ -36,7 +38,8 @@ public class Server implements Runnable {
 	private volatile BufferedWriter server_writer;
 	private volatile BufferedReader server_reader;
 	
-	private final ArrayList<Event> server_events;
+	private final ArrayList<Event> server_events = new ArrayList<Event>();
+	private final ArrayList<Listener> server_listeners = new ArrayList<Listener>();
 
 	private ProcessBuilder server_builder;
 	private Process server_proc;
@@ -51,9 +54,19 @@ public class Server implements Runnable {
 		this.server_dir = new File(Reference.home_folder + File.separator + "servers" + File.separator + server_name);
 		
 		// Register server events:
-		this.server_events = new ArrayList<Event>();
 		this.server_events.add(new xenxier.minecraft.servermagic.event.LoginEvent(this));
 		this.server_events.add(new xenxier.minecraft.servermagic.event.LogoutEvent(this));
+		
+		// Register server listeners:
+		this.server_listeners.add(new xenxier.minecraft.servermagic.listener.AboutListener(this));
+		
+		// Register custom server listeners:
+		JSONArray listener_json = (JSONArray) this.server_json.get("listeners");
+		
+		for (int i = 0; i < listener_json.size(); i++) {
+			JSONObject current = (JSONObject) listener_json.get(i);
+			this.server_listeners.add(new xenxier.minecraft.servermagic.listener.Listener(this, current.get("listen").toString(), current.get("execute").toString()));
+		}
 
 		// Make sure our directory exists:
 		if (!this.server_dir.exists()) {
@@ -241,9 +254,13 @@ public class Server implements Runnable {
 					}
 				}
 				
-				// Loop through events:
+				// Loop through events and listeners:
 				for (int i = 0; i < this.server_events.size(); i++) {
 					this.server_events.get(i).parseLine(line.toString());
+				}
+
+				for (int i = 0; i < this.server_listeners.size(); i++) {
+					this.server_listeners.get(i).parseLog(line.toString());
 				}
 			}
 		} catch (IOException e) {
@@ -256,7 +273,7 @@ public class Server implements Runnable {
 			this.server_writer.write(command.trim() + "\n");
 			this.server_writer.flush();
 		} catch (IOException e) {
-			//e.printStackTrace();
+			Logger.log("Error passing command. Maybe the server died?", this);
 		}
 	}
 }
