@@ -131,11 +131,13 @@ The `time` object specifies how many minutes will pass before ServerMagic backs 
 }
 ```
 
+Since 0.2's release, you can also do `rollback <number> <minutes/hours/days>` to rollback the server. The `rollback` command is controlled under `servers/<server>/backup/world-restore` with `start`, `stop` and `time` - which do the same as backups objects.
+
 ## Advanced
 
-### Listeners (0.2-pre2 and up)
+### Listeners (0.2 release and up)
 
-Listeners are objects that listen to the servers chat log, and execute code when the listener is called. There is a hard-coded listener called `AboutListener` to deminstrate the concept. `AboutListener` will listen for `!about` and display version information about ServerMagic when a player says `!about` in chat.
+Listeners are objects that listen to the servers chat log, and execute code when the listener is called. There is a hard-coded listener called `AboutListener` to demonstrate the concept. `AboutListener` will listen for `!about` and display version information about ServerMagic when a player says `!about` in chat.
 
 You can add your own listeners for each server in your config.json file using the listeners array:
 
