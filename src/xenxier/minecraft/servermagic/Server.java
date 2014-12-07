@@ -99,9 +99,6 @@ public class Server implements Runnable {
 			server_args.add(server_json.get("arguments").toString());
 		}
 		
-		// Test:
-		Logger.log("Set up server with the arguments: '" + server_args + "'");
-		
 		try {
 			overrideServerProperties();
 		} catch (IOException e) {

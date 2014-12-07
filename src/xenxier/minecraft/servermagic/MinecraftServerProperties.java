@@ -58,7 +58,6 @@ public class MinecraftServerProperties {
 	}
 	
 	private void replaceLine(String old_line, String new_line) throws IOException {
-		System.out.println("REPLACE " + old_line + ":" + new_line);
 		String line;
 		File tmp = new File(this.file.getAbsolutePath().toString() + ".tmp");
 		BufferedReader reader = new BufferedReader(new FileReader(this.file));
